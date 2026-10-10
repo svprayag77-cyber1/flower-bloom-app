@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>🌸 Madurai Mulla Mala - South Indian Flower Weaving Game</title>
+  <title>🪔 மதுரை மல்லி மாலை - Madurai Mulla Mala Game</title>
   
   <!-- PWA & Mobile Web App Meta Tags -->
   <meta name="theme-color" content="#1a0f0d">
@@ -14,7 +14,7 @@
   <link rel="manifest" href="manifest.json">
 
   <!-- OpenGraph / Social Sharing Preview -->
-  <meta property="og:title" content="🌸 Madurai Mulla Mala - Flower Weaving Game">
+  <meta property="og:title" content="🪔 மதுரை மல்லி மாலை - Madurai Mulla Mala Game">
   <meta property="og:description" content="Experience the timeless South Indian temple tradition of weaving fragrant jasmine, roses, and kanakambaram into a Mulla Mala garland.">
   <meta property="og:type" content="website">
 
@@ -23,9 +23,10 @@
       --bg-temple: radial-gradient(circle at 50% 30%, #2b1b17 0%, #160c0a 60%, #090504 100%);
       --gold-accent: #ffd700;
       --gold-gradient: linear-gradient(135deg, #ffe57f 0%, #ffb300 50%, #d48800 100%);
-      --panel-bg: rgba(28, 18, 15, 0.82);
-      --panel-border: rgba(255, 215, 0, 0.25);
-      --text: #fff8f0;
+      --glass-panel: rgba(18, 11, 9, 0.58);
+      --glass-border: rgba(255, 215, 0, 0.32);
+      --text-gold: #ffe082;
+      --text: #fff9f0;
       --text-muted: #d7ccc8;
     }
 
@@ -66,175 +67,269 @@
       cursor: grabbing;
     }
 
-    /* Temple Header Overlay */
-    .header-bar {
+    /* ===================================================================== */
+    /* 1. TRADITIONAL ORNATE TEMPLE BANNER (HEADER)                          */
+    /* ===================================================================== */
+    .temple-banner-wrapper {
       position: absolute;
-      top: 20px;
-      left: 24px;
-      z-index: 10;
-      pointer-events: none;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 15;
+      width: 92%;
+      max-width: 1100px;
+      pointer-events: auto;
     }
 
-    .title {
-      font-size: 24px;
+    .temple-banner {
+      background: linear-gradient(180deg, rgba(38, 22, 18, 0.94) 0%, rgba(20, 11, 9, 0.92) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 215, 0, 0.45);
+      border-bottom: 2px solid #ffd700;
+      border-radius: 18px;
+      padding: 10px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 215, 0, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+      position: relative;
+    }
+
+    /* Decorative Ornate Corner Accents */
+    .temple-banner::before, .temple-banner::after {
+      content: '❖';
+      position: absolute;
+      font-size: 11px;
+      color: #ffd700;
+      opacity: 0.85;
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+    }
+    .temple-banner::before { top: 6px; left: 8px; }
+    .temple-banner::after { top: 6px; right: 8px; }
+
+    .temple-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .temple-tamil-heading {
+      font-size: 20px;
       font-weight: 700;
-      letter-spacing: -0.5px;
+      letter-spacing: 0.5px;
       background: var(--gold-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 4px 20px rgba(255, 215, 0, 0.35);
+      text-shadow: 0 2px 14px rgba(255, 215, 0, 0.35);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
-    .subtitle {
-      font-size: 13px;
+    .temple-sub-heading {
+      font-size: 12px;
       color: var(--text-muted);
-      margin-top: 5px;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.4px;
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    .badge-temple {
+    .temple-badge {
       display: inline-block;
-      padding: 2px 8px;
-      font-size: 11px;
-      border-radius: 20px;
-      background: rgba(255, 183, 77, 0.2);
+      padding: 1px 6px;
+      font-size: 10px;
+      border-radius: 12px;
+      background: rgba(255, 215, 0, 0.18);
       color: #ffd54f;
-      border: 1px solid rgba(255, 213, 79, 0.4);
+      border: 1px solid rgba(255, 215, 0, 0.4);
       font-weight: 600;
     }
 
-    /* Garland Stats HUD */
-    .stats-card {
-      position: absolute;
-      top: 20px;
-      right: 24px;
-      z-index: 10;
-      background: var(--panel-bg);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid var(--panel-border);
-      border-radius: 14px;
-      padding: 8px 18px;
-      font-size: 13px;
+    /* Mode Switcher inside Temple Banner */
+    .temple-mode-toggle {
+      display: flex;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 215, 0, 0.28);
+      border-radius: 24px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .temple-mode-btn {
+      border: none;
+      background: transparent;
       color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      pointer-events: none;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-    }
-
-    .stats-card strong {
-      color: #ffd54f;
-      font-weight: 700;
-    }
-
-    /* Interactive Bottom Control Dock */
-    .control-panel {
-      position: absolute;
-      bottom: 22px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-      background: var(--panel-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--panel-border);
-      border-radius: 20px;
-      padding: 10px 18px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 215, 0, 0.1);
-      max-width: 95vw;
-      overflow-x: auto;
-    }
-
-    .btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 215, 0, 0.25);
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 500;
-      padding: 8px 14px;
-      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 18px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      white-space: nowrap;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .btn:hover {
-      background: rgba(255, 215, 0, 0.2);
-      border-color: rgba(255, 215, 0, 0.6);
-      transform: translateY(-1px);
-    }
-
-    .btn.active {
-      background: linear-gradient(135deg, rgba(255, 179, 0, 0.4), rgba(216, 67, 21, 0.4));
-      border-color: #ffd54f;
-      color: #fff;
-    }
-
-    .btn-gold {
-      background: linear-gradient(135deg, #ffb300, #f57c00);
-      border: 1px solid #ffd54f;
-      color: #2e1c05;
+    .temple-mode-btn.active {
+      background: var(--gold-gradient);
+      color: #2b1704;
+      box-shadow: 0 2px 12px rgba(255, 179, 0, 0.4);
       font-weight: 700;
     }
 
-    .btn-gold:hover {
-      background: linear-gradient(135deg, #ffca28, #fb8c00);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 15px rgba(255, 179, 0, 0.4);
-    }
-
-    .divider {
-      width: 1px;
-      height: 24px;
-      background: rgba(255, 215, 0, 0.2);
-    }
-
-    .flower-select {
+    .temple-mode-btn:not(.active):hover {
+      color: #fff;
       background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 215, 0, 0.25);
+    }
+
+    /* Garland Stats Badge */
+    .temple-stats-pill {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .temple-stats-pill strong {
+      color: #ffd54f;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    /* ===================================================================== */
+    /* 2. MODERN FROSTED GLASS DOCK (BUTTONS)                                */
+    /* ===================================================================== */
+    .glass-dock {
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 15;
+      background: var(--glass-panel);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid var(--glass-border);
+      border-radius: 22px;
+      padding: 9px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 25px rgba(255, 215, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+      max-width: 95vw;
+      overflow-x: auto;
+    }
+
+    .glass-btn {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 215, 0, 0.28);
       color: var(--text);
       font-size: 13px;
       font-weight: 500;
-      padding: 7px 10px;
-      border-radius: 10px;
-      outline: none;
+      padding: 8px 15px;
+      border-radius: 14px;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     }
 
-    .flower-select option {
-      background: #241613;
+    .glass-btn:hover {
+      background: rgba(255, 215, 0, 0.18);
+      border-color: rgba(255, 215, 0, 0.75);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(255, 215, 0, 0.25);
+      color: #fff;
+    }
+
+    .glass-btn:active {
+      transform: translateY(1px);
+    }
+
+    .glass-btn.active {
+      background: linear-gradient(135deg, rgba(255, 179, 0, 0.35), rgba(216, 67, 21, 0.35));
+      border-color: #ffd54f;
+      color: #fff;
+      box-shadow: 0 0 14px rgba(255, 213, 79, 0.35);
+    }
+
+    /* Special Gold Finish Button */
+    .glass-btn-gold {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.28), rgba(255, 152, 0, 0.32));
+      border: 1px solid #ffd700;
+      color: #fff9e6;
+      font-weight: 600;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.25);
+    }
+
+    .glass-btn-gold:hover {
+      background: var(--gold-gradient);
+      color: #2b1704;
+      border-color: #ffe082;
+      box-shadow: 0 6px 24px rgba(255, 179, 0, 0.55);
+      font-weight: 700;
+    }
+
+    .glass-divider {
+      width: 1px;
+      height: 22px;
+      background: rgba(255, 215, 0, 0.2);
+    }
+
+    .glass-select {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 215, 0, 0.28);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 7px 12px;
+      border-radius: 14px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .glass-select:hover {
+      border-color: rgba(255, 215, 0, 0.6);
+    }
+
+    .glass-select option {
+      background: #1a0f0d;
       color: #fff;
     }
 
     /* Floating instructional hint */
     .instruction-tooltip {
       position: absolute;
-      top: 75px;
+      top: 86px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 5;
-      background: rgba(30, 18, 14, 0.88);
+      background: rgba(28, 16, 12, 0.85);
       border: 1px solid rgba(255, 215, 0, 0.35);
-      padding: 10px 22px;
-      border-radius: 24px;
-      font-size: 13px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 12px;
       font-weight: 500;
       color: #ffe082;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -242,66 +337,56 @@
       transition: opacity 0.5s ease;
     }
 
-    /* Mode switcher floating pill */
-    .mode-switch-bar {
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-      display: flex;
-      background: rgba(20, 12, 10, 0.75);
-      border: 1px solid rgba(255, 215, 0, 0.2);
-      border-radius: 30px;
-      padding: 4px;
-      gap: 4px;
-    }
-
-    .mode-pill {
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 600;
-      padding: 6px 14px;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .mode-pill.active {
-      background: var(--gold-gradient);
-      color: #2b1704;
-      box-shadow: 0 2px 10px rgba(255, 179, 0, 0.35);
+    @media (max-width: 860px) {
+      .temple-banner {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+      }
+      .instruction-tooltip {
+        top: 135px;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Top Center Mode Selector -->
-  <div class="mode-switch-bar">
-    <button id="modeMalaBtn" class="mode-pill active">🪔 Mulla Mala Game</button>
-    <button id="modeBloomBtn" class="mode-pill">🌸 Free Bloom Canvas</button>
-  </div>
+  <!-- ===================================================================== -->
+  <!-- 1. ORNATE TRADITIONAL TEMPLE BANNER                                   -->
+  <!-- ===================================================================== -->
+  <div class="temple-banner-wrapper">
+    <div class="temple-banner">
+      <!-- Title Block -->
+      <div class="temple-title-block">
+        <div class="temple-tamil-heading">
+          <span>🪔</span> மதுரை மல்லி மாலை
+        </div>
+        <div class="temple-sub-heading">
+          <span class="temple-badge">TRADITION</span> Madurai Mulla Mala • Temple Flower Weaving
+        </div>
+      </div>
 
-  <!-- Temple Header -->
-  <div class="header-bar">
-    <div class="title">
-      🌸 Madurai Mulla Mala
+      <!-- Mode Switcher -->
+      <div class="temple-mode-toggle">
+        <button id="modeMalaBtn" class="temple-mode-btn active">
+          🪔 மல்லி மாலை (Mulla Mala)
+        </button>
+        <button id="modeBloomBtn" class="temple-mode-btn">
+          🌸 பூந்தோட்டம் (Bloom Canvas)
+        </button>
+      </div>
+
+      <!-- Live Counter Pill -->
+      <div class="temple-stats-pill">
+        <span>தொடுத்த மலர்கள் (Flowers):</span>
+        <strong id="garland-count">0</strong>
+      </div>
     </div>
-    <div class="subtitle">
-      <span class="badge-temple">TRADITIONAL</span> Pick flowers from the banana leaf below & knot onto the white rope
-    </div>
   </div>
 
-  <!-- Realtime Garland Counter -->
-  <div class="stats-card">
-    <div>Flowers Woven: <strong id="garland-count">0</strong></div>
-    <div>Vibe: <strong id="vibe-label">Jasmine Fragrance 🌿</strong></div>
-  </div>
-
-  <!-- Top Instructional Hint -->
+  <!-- Floating Instructional Hint -->
   <div class="instruction-tooltip" id="tip-pill">
-    <span>✨</span> Drag flowers from the banana leaf at bottom to the white rope to knot them!
+    <span>✨</span> வாழையிலையிலுள்ள மலர்களை எடுத்து மேலே தொங்கும் வெள்ளை நூலில் தொடுக்கவும்! (Pick flowers from banana leaf & knot onto the white rope)
   </div>
 
   <!-- Main Canvas -->
@@ -309,9 +394,11 @@
     <canvas id="gameCanvas"></canvas>
   </div>
 
-  <!-- Game Control Dock -->
-  <div class="control-panel">
-    <select id="refillSelect" class="flower-select" title="Refill specific flower">
+  <!-- ===================================================================== -->
+  <!-- 2. MODERN FROSTED GLASS DOCK (BUTTONS)                                -->
+  <!-- ===================================================================== -->
+  <div class="glass-dock">
+    <select id="refillSelect" class="glass-select" title="Choose specific flower to refill">
       <option value="all">🍃 Refill: All Flowers</option>
       <option value="jasmine">🤍 Madurai Malligai (Jasmine)</option>
       <option value="rose">🌹 Paneer Roja (Rose)</option>
@@ -321,31 +408,31 @@
       <option value="tulsi">🌿 Sacred Tulsi</option>
     </select>
 
-    <button id="refillBtn" class="btn" title="Add a fresh handful of flowers to the tray">
+    <button id="refillBtn" class="glass-btn" title="Add a fresh handful of flowers to the tray">
       🌸 Add Flowers
     </button>
 
-    <div class="divider"></div>
+    <div class="glass-divider"></div>
 
-    <button id="hairModeBtn" class="btn" title="Preview garland draped on South Indian hair bun (Kondai)">
+    <button id="hairModeBtn" class="glass-btn" title="Preview garland draped on South Indian hair bun (Kondai)">
       👑 Try on Hair
     </button>
 
-    <button id="soundToggleBtn" class="btn active" title="Toggle Carnatic chime harmonics">
+    <button id="soundToggleBtn" class="glass-btn active" title="Toggle Carnatic chime harmonics">
       🔔 Temple Bells: ON
     </button>
 
-    <button id="celebrateBtn" class="btn btn-gold" title="Complete the garland with celebratory temple bells & flower shower">
+    <button id="celebrateBtn" class="glass-btn glass-btn-gold" title="Complete the garland with celebratory temple bells & flower shower">
       ✨ Finish Garland!
     </button>
 
-    <div class="divider"></div>
+    <div class="glass-divider"></div>
 
-    <button id="clearBtn" class="btn" title="Start a fresh thread">
+    <button id="clearBtn" class="glass-btn" title="Start a fresh thread">
       🧹 New Thread
     </button>
 
-    <button id="saveBtn" class="btn" title="Save your garland artwork">
+    <button id="saveBtn" class="glass-btn" title="Save your garland artwork">
       📸 Save
     </button>
   </div>
@@ -394,7 +481,6 @@
     // --- INITIALIZE BLOOM CANVAS MODE ---
     function initBloomMode() {
       if (malaGame) {
-        // Destroy mala game loop
         cancelAnimationFrame(malaGame._animFrame);
         malaGame = null;
       }
@@ -420,12 +506,9 @@
       currentMode = 'mala';
       modeMalaBtn.classList.add('active');
       modeBloomBtn.classList.remove('active');
-      document.querySelector('.header-bar .title').innerHTML = '🌸 Madurai Mulla Mala';
-      document.querySelector('.header-bar .subtitle').innerHTML = '<span class="badge-temple">TRADITIONAL</span> Pick flowers from the banana leaf below & knot onto the white rope';
-      document.getElementById('vibe-label').innerText = 'Jasmine Fragrance 🌿';
-      tipPill.innerHTML = '<span>✨</span> Drag flowers from the banana leaf at bottom to the white rope to knot them!';
+      tipPill.innerHTML = '<span>✨</span> வாழையிலையிலுள்ள மலர்களை எடுத்து மேலே தொங்கும் வெள்ளை நூலில் தொடுக்கவும்! (Pick flowers from banana leaf & knot onto the white rope)';
       tipPill.style.opacity = '1';
-      document.querySelector('.control-panel').style.display = 'flex';
+      document.querySelector('.glass-dock').style.display = 'flex';
       initMalaGame();
     });
 
@@ -434,9 +517,6 @@
       currentMode = 'bloom';
       modeBloomBtn.classList.add('active');
       modeMalaBtn.classList.remove('active');
-      document.querySelector('.header-bar .title').innerHTML = '🌸 Enchanted Bloom Canvas';
-      document.querySelector('.header-bar .subtitle').innerHTML = '<span class="badge-temple">LIVE</span> Sweep or run cursor to sprout blooming flowers';
-      document.getElementById('vibe-label').innerText = 'Running Petals ✨';
       tipPill.innerHTML = '<span>✨</span> Run your mouse across screen to watch flowers blossom!';
       tipPill.style.opacity = '1';
       initBloomMode();
