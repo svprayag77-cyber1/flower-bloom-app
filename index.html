@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🌸 Enchanted Bloom Canvas - Interactive Botanical Web App</title>
+  
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <meta name="theme-color" content="#0d131f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BloomCanvas">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.json">
+
+  <!-- OpenGraph / Social Sharing Preview -->
+  <meta property="og:title" content="🌸 Enchanted Bloom Canvas">
+  <meta property="og:description" content="Interactive generative botanical canvas where flowers blossom as your cursor sweeps across the screen.">
+  <meta property="og:type" content="website">
+  
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at 50% 50%, #0d131f 0%, #06080d 100%);
+      --accent: #ff6b9d;
+      --panel-bg: rgba(18, 24, 38, 0.78);
+      --panel-border: rgba(255, 255, 255, 0.12);
+      --text: #f0f4fc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text);
+    }
+
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+
+    /* Ambient cursor follower */
+    #cursor-glow {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      margin-left: -30px;
+      margin-top: -30px;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(255, 182, 193, 0.45) 0%, rgba(255, 105, 180, 0.15) 50%, transparent 70%);
+      mix-blend-mode: screen;
+      transform: translate3d(-100px, -100px, 0);
+      z-index: 2;
+    }
+
+    /* Header Overlay */
+    .header-bar {
+      position: absolute;
+      top: 24px;
+      left: 28px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .title {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ff9ebb, #ffa07a, #a5b4fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 4px 20px rgba(255, 107, 157, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 5px;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      font-size: 11px;
+      border-radius: 20px;
+      background: rgba(255, 107, 157, 0.18);
+      color: #ff9ebb;
+      border: 1px solid rgba(255, 107, 157, 0.3);
+      font-weight: 600;
+    }
+
+    /* Stats Indicator */
+    .stats-card {
+      position: absolute;
+      top: 24px;
+      right: 28px;
+      z-index: 10;
+      background: var(--panel-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 8px 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      pointer-events: none;
+    }
+
+    .stats-card strong {
+      color: #ff9ebb;
+      font-weight: 600;
+    }
+
+    /* Floating Control Panel */
+    .control-panel {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--panel-border);
+      border-radius: 18px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+      transition: all 0.25s ease;
+    }
+
+    .control-panel:hover {
+      border-color: rgba(255, 255, 255, 0.22);
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn.active {
+      background: linear-gradient(135deg, rgba(255, 107, 157, 0.4), rgba(244, 63, 94, 0.3));
+      border-color: rgba(255, 107, 157, 0.6);
+      color: #fff;
+    }
+
+    .divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .palette-dropdown, .style-select {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 7px 10px;
+      border-radius: 10px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .palette-dropdown option, .style-select option {
+      background: #111827;
+      color: #fff;
+    }
+
+    /* Instruction pill on first load */
+    .instruction-tooltip {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 182, 193, 0.3);
+      padding: 16px 28px;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #ffffff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 107, 157, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      pointer-events: none;
+      animation: pulseAnimation 2s infinite ease-in-out;
+      transition: opacity 0.5s ease;
+    }
+
+    @keyframes pulseAnimation {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.95; }
+      50% { transform: translate(-50%, -50%) scale(1.03); opacity: 1; }
+    }
+
+    .instruction-tooltip.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Ambient glow follower -->
+  <div id="cursor-glow"></div>
+
+  <!-- Header -->
+  <div class="header-bar">
+    <div class="title">
+      🌸 Enchanted Bloom Canvas
+    </div>
+    <div class="subtitle">
+      <span class="badge">MODULAR ENGINE</span> Run your cursor to sprout botanical stems & blooming flowers
+    </div>
+  </div>
+
+  <!-- Realtime Flower Counter -->
+  <div class="stats-card">
+    <div>Blooms: <strong id="flower-count">0</strong></div>
+    <div>Speed: <strong id="speed-indicator">0 px/s</strong></div>
+  </div>
+
+  <!-- Center Guidance Prompt -->
+  <div class="instruction-tooltip" id="tip-pill">
+    <span>✨</span> Sweep your mouse across the canvas to watch flowers bloom!
+  </div>
+
+  <!-- Main Canvas -->
+  <div id="canvas-container">
+    <canvas id="bloomCanvas"></canvas>
+  </div>
+
+  <!-- Interactive Toolbar -->
+  <div class="control-panel">
+    <select id="paletteSelect" class="palette-dropdown" title="Color Theme">
+      <option value="wildflower" selected>🌺 Wildflower Dream</option>
+      <option value="cherry">🌸 Cherry Sakura</option>
+      <option value="sunset">🌅 Sunset Meadow</option>
+      <option value="aurora">🌌 Cosmic Aurora</option>
+      <option value="golden">✨ Golden Sunburst</option>
+      <option value="neonCyber">⚡ Neon Cyberpunk</option>
+      <option value="lavenderMist">💜 Lavender Mist</option>
+    </select>
+
+    <select id="typeSelect" class="style-select" title="Flower Species">
+      <option value="random" selected>🌼 Mixed Species</option>
+      <option value="sakura">🌸 Sakura (Cherry Blossom)</option>
+      <option value="lotus">🪷 Lotus Water-Lily</option>
+      <option value="peony">🌹 Peony & Rose</option>
+      <option value="daisy">🌼 Star Daisy</option>
+      <option value="cosmos">🌺 Cosmos Glow</option>
+      <option value="sunflower">🌻 Radiant Sunflower</option>
+    </select>
+
+    <div class="divider"></div>
+
+    <button id="vinesToggle" class="btn active" title="Toggle botanical stems">
+      🌿 Vines: ON
+    </button>
+
+    <button id="soundToggle" class="btn" title="Toggle audio chime harmonies on bloom">
+      🎵 Sound: OFF
+    </button>
+
+    <button id="autoDemoToggle" class="btn" title="Watch automatic butterfly garden flyover">
+      🦋 Auto Run
+    </button>
+
+    <div class="divider"></div>
+
+    <button id="clearBtn" class="btn" title="Clear canvas">
+      🧹 Clear
+    </button>
+
+    <button id="saveBtn" class="btn" title="Download your floral artwork">
+      📸 Save
+    </button>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODULAR SYSTEMS ARCHITECTURE (INCLUDE FILES)                          -->
+  <!-- ===================================================================== -->
+  <!-- 1. Presets registry: Palettes, Species Geometry & Audio Scales -->
+  <script src="bloom-presets.js"></script>
+
+  <!-- 2. Core Bloom Engine: Physics, Stems, Petals & High-DPI Renderer -->
+  <script src="flower-bloom.js"></script>
+
+  <!-- 3. Application Glue / UI Binding -->
+  <script>
+    // Initialize the engine with presets
+    const engine = new BloomEngine('#bloomCanvas', {
+      palette: 'wildflower',
+      species: 'random',
+      enableVines: true,
+      enableSound: false
+    });
+
+    // Cache UI elements
+    const flowerCountEl = document.getElementById('flower-count');
+    const speedIndicatorEl = document.getElementById('speed-indicator');
+    const tipPill = document.getElementById('tip-pill');
+    const cursorGlow = document.getElementById('cursor-glow');
+
+    // Hook into bloom event for stats
+    engine.onBloom = (stats) => {
+      flowerCountEl.innerText = stats.count;
+      tipPill.classList.add('hidden');
+    };
+
+    // Update cursor glow and speed indicator
+    window.addEventListener('mousemove', (e) => {
+      cursorGlow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) scale(${Math.min(2.5, 1 + engine.mouse.speed / 800)})`;
+      speedIndicatorEl.innerText = `${Math.round(engine.mouse.speed)} px/s`;
+    });
+
+    // Control buttons binding
+    document.getElementById('paletteSelect').addEventListener('change', (e) => {
+      engine.setPalette(e.target.value);
+    });
+
+    document.getElementById('typeSelect').addEventListener('change', (e) => {
+      engine.setSpecies(e.target.value);
+    });
+
+    const vinesToggleBtn = document.getElementById('vinesToggle');
+    vinesToggleBtn.addEventListener('click', () => {
+      const active = !engine.enableVines;
+      engine.setVines(active);
+      vinesToggleBtn.classList.toggle('active', active);
+      vinesToggleBtn.innerText = active ? '🌿 Vines: ON' : '🌿 Vines: OFF';
+    });
+
+    const soundToggleBtn = document.getElementById('soundToggle');
+    soundToggleBtn.addEventListener('click', () => {
+      const active = !engine.enableSound;
+      engine.setSound(active);
+      soundToggleBtn.classList.toggle('active', active);
+      soundToggleBtn.innerText = active ? '🎵 Sound: ON' : '🎵 Sound: OFF';
+    });
+
+    const autoDemoToggleBtn = document.getElementById('autoDemoToggle');
+    autoDemoToggleBtn.addEventListener('click', () => {
+      const running = engine.toggleAutoDemo();
+      autoDemoToggleBtn.classList.toggle('active', running);
+      autoDemoToggleBtn.innerText = running ? '⏸️ Pause Auto' : '🦋 Auto Run';
+      if (running) tipPill.classList.add('hidden');
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      engine.clear();
+      flowerCountEl.innerText = '0';
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      engine.exportPNG(`blooming-garden-${Date.now()}.png`);
+    });
+  </script>
+</body>
+</html>
