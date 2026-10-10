@@ -1,0 +1,18 @@
+{
+  "name": "Enchanted Bloom Canvas",
+  "short_name": "BloomCanvas",
+  "description": "Interactive generative botanical canvas where flowers blossom as you move your mouse or touch.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0d131f",
+  "theme_color": "#0d131f",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
