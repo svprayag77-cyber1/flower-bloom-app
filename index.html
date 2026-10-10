@@ -3,29 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>🌸 Enchanted Bloom Canvas - Interactive Botanical Web App</title>
+  <title>🌸 Madurai Mulla Mala - South Indian Flower Weaving Game</title>
   
   <!-- PWA & Mobile Web App Meta Tags -->
-  <meta name="theme-color" content="#0d131f">
+  <meta name="theme-color" content="#1a0f0d">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="BloomCanvas">
+  <meta name="apple-mobile-web-app-title" content="MullaMala">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="manifest" href="manifest.json">
 
   <!-- OpenGraph / Social Sharing Preview -->
-  <meta property="og:title" content="🌸 Enchanted Bloom Canvas">
-  <meta property="og:description" content="Interactive generative botanical canvas where flowers blossom as your cursor sweeps across the screen.">
+  <meta property="og:title" content="🌸 Madurai Mulla Mala - Flower Weaving Game">
+  <meta property="og:description" content="Experience the timeless South Indian temple tradition of weaving fragrant jasmine, roses, and kanakambaram into a Mulla Mala garland.">
   <meta property="og:type" content="website">
-  
+
   <style>
     :root {
-      --bg-gradient: radial-gradient(circle at 50% 50%, #0d131f 0%, #06080d 100%);
-      --accent: #ff6b9d;
-      --panel-bg: rgba(18, 24, 38, 0.78);
-      --panel-border: rgba(255, 255, 255, 0.12);
-      --text: #f0f4fc;
-      --text-muted: #94a3b8;
+      --bg-temple: radial-gradient(circle at 50% 30%, #2b1b17 0%, #160c0a 60%, #090504 100%);
+      --gold-accent: #ffd700;
+      --gold-gradient: linear-gradient(135deg, #ffe57f 0%, #ffb300 50%, #d48800 100%);
+      --panel-bg: rgba(28, 18, 15, 0.82);
+      --panel-border: rgba(255, 215, 0, 0.25);
+      --text: #fff8f0;
+      --text-muted: #d7ccc8;
     }
 
     * {
@@ -33,6 +34,7 @@
       margin: 0;
       padding: 0;
       user-select: none;
+      -webkit-user-select: none;
     }
 
     body, html {
@@ -40,7 +42,7 @@
       height: 100%;
       overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background: var(--bg-gradient);
+      background: var(--bg-temple);
       color: var(--text);
     }
 
@@ -57,41 +59,30 @@
       display: block;
       width: 100%;
       height: 100%;
-      cursor: crosshair;
+      cursor: grab;
     }
 
-    /* Ambient cursor follower */
-    #cursor-glow {
-      position: absolute;
-      width: 60px;
-      height: 60px;
-      margin-left: -30px;
-      margin-top: -30px;
-      border-radius: 50%;
-      pointer-events: none;
-      background: radial-gradient(circle, rgba(255, 182, 193, 0.45) 0%, rgba(255, 105, 180, 0.15) 50%, transparent 70%);
-      mix-blend-mode: screen;
-      transform: translate3d(-100px, -100px, 0);
-      z-index: 2;
+    canvas:active {
+      cursor: grabbing;
     }
 
-    /* Header Overlay */
+    /* Temple Header Overlay */
     .header-bar {
       position: absolute;
-      top: 24px;
-      left: 28px;
+      top: 20px;
+      left: 24px;
       z-index: 10;
       pointer-events: none;
     }
 
     .title {
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 700;
       letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #ff9ebb, #ffa07a, #a5b4fc);
+      background: var(--gold-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 4px 20px rgba(255, 107, 157, 0.25);
+      text-shadow: 0 4px 20px rgba(255, 215, 0, 0.35);
       display: flex;
       align-items: center;
       gap: 10px;
@@ -101,53 +92,53 @@
       font-size: 13px;
       color: var(--text-muted);
       margin-top: 5px;
-      font-weight: 400;
       letter-spacing: 0.3px;
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    .badge {
+    .badge-temple {
       display: inline-block;
-      padding: 2px 7px;
+      padding: 2px 8px;
       font-size: 11px;
       border-radius: 20px;
-      background: rgba(255, 107, 157, 0.18);
-      color: #ff9ebb;
-      border: 1px solid rgba(255, 107, 157, 0.3);
+      background: rgba(255, 183, 77, 0.2);
+      color: #ffd54f;
+      border: 1px solid rgba(255, 213, 79, 0.4);
       font-weight: 600;
     }
 
-    /* Stats Indicator */
+    /* Garland Stats HUD */
     .stats-card {
       position: absolute;
-      top: 24px;
-      right: 28px;
+      top: 20px;
+      right: 24px;
       z-index: 10;
       background: var(--panel-bg);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border: 1px solid var(--panel-border);
       border-radius: 14px;
-      padding: 8px 16px;
-      font-size: 12px;
+      padding: 8px 18px;
+      font-size: 13px;
       color: var(--text-muted);
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
       pointer-events: none;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     }
 
     .stats-card strong {
-      color: #ff9ebb;
-      font-weight: 600;
+      color: #ffd54f;
+      font-weight: 700;
     }
 
-    /* Floating Control Panel */
+    /* Interactive Bottom Control Dock */
     .control-panel {
       position: absolute;
-      bottom: 24px;
+      bottom: 22px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 10;
@@ -155,22 +146,19 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--panel-border);
-      border-radius: 18px;
+      border-radius: 20px;
       padding: 10px 18px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
-      transition: all 0.25s ease;
-    }
-
-    .control-panel:hover {
-      border-color: rgba(255, 255, 255, 0.22);
+      gap: 10px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 215, 0, 0.1);
+      max-width: 95vw;
+      overflow-x: auto;
     }
 
     .btn {
       background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 215, 0, 0.25);
       color: var(--text);
       font-size: 13px;
       font-weight: 500;
@@ -180,30 +168,44 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      white-space: nowrap;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .btn:hover {
-      background: rgba(255, 255, 255, 0.16);
-      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 215, 0, 0.2);
+      border-color: rgba(255, 215, 0, 0.6);
       transform: translateY(-1px);
     }
 
     .btn.active {
-      background: linear-gradient(135deg, rgba(255, 107, 157, 0.4), rgba(244, 63, 94, 0.3));
-      border-color: rgba(255, 107, 157, 0.6);
+      background: linear-gradient(135deg, rgba(255, 179, 0, 0.4), rgba(216, 67, 21, 0.4));
+      border-color: #ffd54f;
       color: #fff;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #ffb300, #f57c00);
+      border: 1px solid #ffd54f;
+      color: #2e1c05;
+      font-weight: 700;
+    }
+
+    .btn-gold:hover {
+      background: linear-gradient(135deg, #ffca28, #fb8c00);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(255, 179, 0, 0.4);
     }
 
     .divider {
       width: 1px;
       height: 24px;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 215, 0, 0.2);
     }
 
-    .palette-dropdown, .style-select {
+    .flower-select {
       background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 215, 0, 0.25);
       color: var(--text);
       font-size: 13px;
       font-weight: 500;
@@ -213,199 +215,279 @@
       cursor: pointer;
     }
 
-    .palette-dropdown option, .style-select option {
-      background: #111827;
+    .flower-select option {
+      background: #241613;
       color: #fff;
     }
 
-    /* Instruction pill on first load */
+    /* Floating instructional hint */
     .instruction-tooltip {
       position: absolute;
-      top: 50%;
+      top: 75px;
       left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translateX(-50%);
       z-index: 5;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(255, 182, 193, 0.3);
-      padding: 16px 28px;
-      border-radius: 30px;
-      font-size: 16px;
+      background: rgba(30, 18, 14, 0.88);
+      border: 1px solid rgba(255, 215, 0, 0.35);
+      padding: 10px 22px;
+      border-radius: 24px;
+      font-size: 13px;
       font-weight: 500;
-      color: #ffffff;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 107, 157, 0.2);
+      color: #ffe082;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       pointer-events: none;
-      animation: pulseAnimation 2s infinite ease-in-out;
       transition: opacity 0.5s ease;
     }
 
-    @keyframes pulseAnimation {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.95; }
-      50% { transform: translate(-50%, -50%) scale(1.03); opacity: 1; }
+    /* Mode switcher floating pill */
+    .mode-switch-bar {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      background: rgba(20, 12, 10, 0.75);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      border-radius: 30px;
+      padding: 4px;
+      gap: 4px;
     }
 
-    .instruction-tooltip.hidden {
-      opacity: 0;
-      pointer-events: none;
+    .mode-pill {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .mode-pill.active {
+      background: var(--gold-gradient);
+      color: #2b1704;
+      box-shadow: 0 2px 10px rgba(255, 179, 0, 0.35);
     }
   </style>
 </head>
 <body>
-  <!-- Ambient glow follower -->
-  <div id="cursor-glow"></div>
+  <!-- Top Center Mode Selector -->
+  <div class="mode-switch-bar">
+    <button id="modeMalaBtn" class="mode-pill active">🪔 Mulla Mala Game</button>
+    <button id="modeBloomBtn" class="mode-pill">🌸 Free Bloom Canvas</button>
+  </div>
 
-  <!-- Header -->
+  <!-- Temple Header -->
   <div class="header-bar">
     <div class="title">
-      🌸 Enchanted Bloom Canvas
+      🌸 Madurai Mulla Mala
     </div>
     <div class="subtitle">
-      <span class="badge">MODULAR ENGINE</span> Run your cursor to sprout botanical stems & blooming flowers
+      <span class="badge-temple">TRADITIONAL</span> Pick flowers from the banana leaf below & knot onto the white rope
     </div>
   </div>
 
-  <!-- Realtime Flower Counter -->
+  <!-- Realtime Garland Counter -->
   <div class="stats-card">
-    <div>Blooms: <strong id="flower-count">0</strong></div>
-    <div>Speed: <strong id="speed-indicator">0 px/s</strong></div>
+    <div>Flowers Woven: <strong id="garland-count">0</strong></div>
+    <div>Vibe: <strong id="vibe-label">Jasmine Fragrance 🌿</strong></div>
   </div>
 
-  <!-- Center Guidance Prompt -->
+  <!-- Top Instructional Hint -->
   <div class="instruction-tooltip" id="tip-pill">
-    <span>✨</span> Sweep your mouse across the canvas to watch flowers bloom!
+    <span>✨</span> Drag flowers from the banana leaf at bottom to the white rope to knot them!
   </div>
 
   <!-- Main Canvas -->
   <div id="canvas-container">
-    <canvas id="bloomCanvas"></canvas>
+    <canvas id="gameCanvas"></canvas>
   </div>
 
-  <!-- Interactive Toolbar -->
+  <!-- Game Control Dock -->
   <div class="control-panel">
-    <select id="paletteSelect" class="palette-dropdown" title="Color Theme">
-      <option value="wildflower" selected>🌺 Wildflower Dream</option>
-      <option value="cherry">🌸 Cherry Sakura</option>
-      <option value="sunset">🌅 Sunset Meadow</option>
-      <option value="aurora">🌌 Cosmic Aurora</option>
-      <option value="golden">✨ Golden Sunburst</option>
-      <option value="neonCyber">⚡ Neon Cyberpunk</option>
-      <option value="lavenderMist">💜 Lavender Mist</option>
+    <select id="refillSelect" class="flower-select" title="Refill specific flower">
+      <option value="all">🍃 Refill: All Flowers</option>
+      <option value="jasmine">🤍 Madurai Malligai (Jasmine)</option>
+      <option value="rose">🌹 Paneer Roja (Rose)</option>
+      <option value="kanakambaram">🏵️ Kanakambaram (Saffron)</option>
+      <option value="sevvanthi">🌻 Sevvanthi (Marigold)</option>
+      <option value="vadamalli">💜 Vadamalli (Purple)</option>
+      <option value="tulsi">🌿 Sacred Tulsi</option>
     </select>
 
-    <select id="typeSelect" class="style-select" title="Flower Species">
-      <option value="random" selected>🌼 Mixed Species</option>
-      <option value="sakura">🌸 Sakura (Cherry Blossom)</option>
-      <option value="lotus">🪷 Lotus Water-Lily</option>
-      <option value="peony">🌹 Peony & Rose</option>
-      <option value="daisy">🌼 Star Daisy</option>
-      <option value="cosmos">🌺 Cosmos Glow</option>
-      <option value="sunflower">🌻 Radiant Sunflower</option>
-    </select>
-
-    <div class="divider"></div>
-
-    <button id="vinesToggle" class="btn active" title="Toggle botanical stems">
-      🌿 Vines: ON
-    </button>
-
-    <button id="soundToggle" class="btn" title="Toggle audio chime harmonies on bloom">
-      🎵 Sound: OFF
-    </button>
-
-    <button id="autoDemoToggle" class="btn" title="Watch automatic butterfly garden flyover">
-      🦋 Auto Run
+    <button id="refillBtn" class="btn" title="Add a fresh handful of flowers to the tray">
+      🌸 Add Flowers
     </button>
 
     <div class="divider"></div>
 
-    <button id="clearBtn" class="btn" title="Clear canvas">
-      🧹 Clear
+    <button id="hairModeBtn" class="btn" title="Preview garland draped on South Indian hair bun (Kondai)">
+      👑 Try on Hair
     </button>
 
-    <button id="saveBtn" class="btn" title="Download your floral artwork">
+    <button id="soundToggleBtn" class="btn active" title="Toggle Carnatic chime harmonics">
+      🔔 Temple Bells: ON
+    </button>
+
+    <button id="celebrateBtn" class="btn btn-gold" title="Complete the garland with celebratory temple bells & flower shower">
+      ✨ Finish Garland!
+    </button>
+
+    <div class="divider"></div>
+
+    <button id="clearBtn" class="btn" title="Start a fresh thread">
+      🧹 New Thread
+    </button>
+
+    <button id="saveBtn" class="btn" title="Save your garland artwork">
       📸 Save
     </button>
   </div>
 
   <!-- ===================================================================== -->
-  <!-- MODULAR SYSTEMS ARCHITECTURE (INCLUDE FILES)                          -->
+  <!-- MODULAR SYSTEMS ARCHITECTURE (LIBRARIES)                              -->
   <!-- ===================================================================== -->
-  <!-- 1. Presets registry: Palettes, Species Geometry & Audio Scales -->
+  <!-- 1. Running Bloom Engine (for Free Bloom mode) -->
   <script src="bloom-presets.js"></script>
-
-  <!-- 2. Core Bloom Engine: Physics, Stems, Petals & High-DPI Renderer -->
   <script src="flower-bloom.js"></script>
 
-  <!-- 3. Application Glue / UI Binding -->
+  <!-- 2. Mulla Mala Game Engine (South Indian flower stringing game) -->
+  <script src="mala-engine.js"></script>
+
+  <!-- 3. Orchestration & Event Wiring -->
   <script>
-    // Initialize the engine with presets
-    const engine = new BloomEngine('#bloomCanvas', {
-      palette: 'wildflower',
-      species: 'random',
-      enableVines: true,
-      enableSound: false
-    });
-
-    // Cache UI elements
-    const flowerCountEl = document.getElementById('flower-count');
-    const speedIndicatorEl = document.getElementById('speed-indicator');
+    const canvas = document.getElementById('gameCanvas');
+    const garlandCountEl = document.getElementById('garland-count');
     const tipPill = document.getElementById('tip-pill');
-    const cursorGlow = document.getElementById('cursor-glow');
+    const hairModeBtn = document.getElementById('hairModeBtn');
+    const soundToggleBtn = document.getElementById('soundToggleBtn');
+    const refillBtn = document.getElementById('refillBtn');
+    const refillSelect = document.getElementById('refillSelect');
+    const celebrateBtn = document.getElementById('celebrateBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const saveBtn = document.getElementById('saveBtn');
 
-    // Hook into bloom event for stats
-    engine.onBloom = (stats) => {
-      flowerCountEl.innerText = stats.count;
-      tipPill.classList.add('hidden');
-    };
+    let currentMode = 'mala'; // 'mala' or 'bloom'
+    let malaGame = null;
+    let bloomEngine = null;
 
-    // Update cursor glow and speed indicator
-    window.addEventListener('mousemove', (e) => {
-      cursorGlow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) scale(${Math.min(2.5, 1 + engine.mouse.speed / 800)})`;
-      speedIndicatorEl.innerText = `${Math.round(engine.mouse.speed)} px/s`;
+    // --- INITIALIZE MULLA MALA GAME ---
+    function initMalaGame() {
+      if (bloomEngine) {
+        bloomEngine.destroy();
+        bloomEngine = null;
+      }
+      malaGame = new MalaGameEngine.MalaGameEngine('#gameCanvas');
+
+      malaGame.onFlowerStrung = (count) => {
+        garlandCountEl.innerText = count;
+        tipPill.style.opacity = '0';
+      };
+    }
+
+    // --- INITIALIZE BLOOM CANVAS MODE ---
+    function initBloomMode() {
+      if (malaGame) {
+        // Destroy mala game loop
+        cancelAnimationFrame(malaGame._animFrame);
+        malaGame = null;
+      }
+      bloomEngine = new BloomEngine('#gameCanvas', {
+        palette: 'wildflower',
+        species: 'random',
+        enableVines: true,
+        enableSound: true
+      });
+      bloomEngine.onBloom = (stats) => {
+        garlandCountEl.innerText = stats.count;
+      };
+    }
+
+    initMalaGame();
+
+    // Mode Switchers
+    const modeMalaBtn = document.getElementById('modeMalaBtn');
+    const modeBloomBtn = document.getElementById('modeBloomBtn');
+
+    modeMalaBtn.addEventListener('click', () => {
+      if (currentMode === 'mala') return;
+      currentMode = 'mala';
+      modeMalaBtn.classList.add('active');
+      modeBloomBtn.classList.remove('active');
+      document.querySelector('.header-bar .title').innerHTML = '🌸 Madurai Mulla Mala';
+      document.querySelector('.header-bar .subtitle').innerHTML = '<span class="badge-temple">TRADITIONAL</span> Pick flowers from the banana leaf below & knot onto the white rope';
+      document.getElementById('vibe-label').innerText = 'Jasmine Fragrance 🌿';
+      tipPill.innerHTML = '<span>✨</span> Drag flowers from the banana leaf at bottom to the white rope to knot them!';
+      tipPill.style.opacity = '1';
+      document.querySelector('.control-panel').style.display = 'flex';
+      initMalaGame();
     });
 
-    // Control buttons binding
-    document.getElementById('paletteSelect').addEventListener('change', (e) => {
-      engine.setPalette(e.target.value);
+    modeBloomBtn.addEventListener('click', () => {
+      if (currentMode === 'bloom') return;
+      currentMode = 'bloom';
+      modeBloomBtn.classList.add('active');
+      modeMalaBtn.classList.remove('active');
+      document.querySelector('.header-bar .title').innerHTML = '🌸 Enchanted Bloom Canvas';
+      document.querySelector('.header-bar .subtitle').innerHTML = '<span class="badge-temple">LIVE</span> Sweep or run cursor to sprout blooming flowers';
+      document.getElementById('vibe-label').innerText = 'Running Petals ✨';
+      tipPill.innerHTML = '<span>✨</span> Run your mouse across screen to watch flowers blossom!';
+      tipPill.style.opacity = '1';
+      initBloomMode();
     });
 
-    document.getElementById('typeSelect').addEventListener('change', (e) => {
-      engine.setSpecies(e.target.value);
+    // Control Handlers for Mulla Mala
+    refillBtn.addEventListener('click', () => {
+      if (malaGame) {
+        const val = refillSelect.value;
+        malaGame.refillBasket(val === 'all' ? null : val);
+      }
     });
 
-    const vinesToggleBtn = document.getElementById('vinesToggle');
-    vinesToggleBtn.addEventListener('click', () => {
-      const active = !engine.enableVines;
-      engine.setVines(active);
-      vinesToggleBtn.classList.toggle('active', active);
-      vinesToggleBtn.innerText = active ? '🌿 Vines: ON' : '🌿 Vines: OFF';
+    hairModeBtn.addEventListener('click', () => {
+      if (malaGame) {
+        const active = malaGame.toggleHairMode();
+        hairModeBtn.classList.toggle('active', active);
+        hairModeBtn.innerText = active ? '👑 Remove Hair' : '👑 Try on Hair';
+      }
     });
 
-    const soundToggleBtn = document.getElementById('soundToggle');
     soundToggleBtn.addEventListener('click', () => {
-      const active = !engine.enableSound;
-      engine.setSound(active);
-      soundToggleBtn.classList.toggle('active', active);
-      soundToggleBtn.innerText = active ? '🎵 Sound: ON' : '🎵 Sound: OFF';
+      if (malaGame) {
+        malaGame.sound.enabled = !malaGame.sound.enabled;
+        soundToggleBtn.classList.toggle('active', malaGame.sound.enabled);
+        soundToggleBtn.innerText = malaGame.sound.enabled ? '🔔 Temple Bells: ON' : '🔔 Temple Bells: OFF';
+      }
     });
 
-    const autoDemoToggleBtn = document.getElementById('autoDemoToggle');
-    autoDemoToggleBtn.addEventListener('click', () => {
-      const running = engine.toggleAutoDemo();
-      autoDemoToggleBtn.classList.toggle('active', running);
-      autoDemoToggleBtn.innerText = running ? '⏸️ Pause Auto' : '🦋 Auto Run';
-      if (running) tipPill.classList.add('hidden');
+    celebrateBtn.addEventListener('click', () => {
+      if (malaGame) {
+        malaGame.celebrateComplete();
+      }
     });
 
-    document.getElementById('clearBtn').addEventListener('click', () => {
-      engine.clear();
-      flowerCountEl.innerText = '0';
+    clearBtn.addEventListener('click', () => {
+      if (malaGame) {
+        malaGame.clearGarland();
+        garlandCountEl.innerText = '0';
+      } else if (bloomEngine) {
+        bloomEngine.clear();
+        garlandCountEl.innerText = '0';
+      }
     });
 
-    document.getElementById('saveBtn').addEventListener('click', () => {
-      engine.exportPNG(`blooming-garden-${Date.now()}.png`);
+    saveBtn.addEventListener('click', () => {
+      if (malaGame) {
+        malaGame.exportPNG(`madurai-mulla-mala-${Date.now()}.png`);
+      } else if (bloomEngine) {
+        bloomEngine.exportPNG(`bloom-canvas-${Date.now()}.png`);
+      }
     });
   </script>
 </body>
